@@ -1,0 +1,25 @@
+{
+  "name": "phorest-ui-tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bddgen": "npx bddgen",
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:giftvoucher": "npx playwright test .features-gen/features/GiftVoucher.feature.spec.js --project=chromium",
+    "cucumber": "cucumber-js \"features/**/*.feature\" --require-module ts-node/register --require step_definitions/**/*.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.7.0",
+    "@playwright/test": "^1.58.2",
+    "@types/cucumber": "^6.0.1",
+    "@types/node": "^25.3.1",
+    "playwright-bdd": "^8.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  // tell the Cucumber feature file extension where to look for step definitions
+  "cucumber.glue": [
+    "step_definitions/**/*.ts"
+  ],
+  // optionally specify where your feature files live
+  "cucumber.featureFiles": [
+    "features/**/*.feature"
+  ],
+  // keep strict completion on so that unknown steps are flagged
+  "cucumber.strictGherkinCompletion": true
+}
