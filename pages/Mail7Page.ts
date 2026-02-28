@@ -10,7 +10,7 @@ export class Mail7Page {
   // Constants
   static readonly receiptSubject = 'Your Receipt for City Salon';
   static readonly initialWaitMs = 11000;       // wait before first inbox check to allow email delivery
-  static readonly inboxPollTimeoutMs = 30000;
+  static readonly inboxPollTimeoutMs = 60000;
   static readonly inboxPollIntervalMs = 3000;
 
   constructor(page: Page) {
@@ -18,14 +18,16 @@ export class Mail7Page {
 
     this.usernameInput = page.getByRole('textbox', { name: 'username' });
     this.openInboxButton = page.getByRole('button', { name: 'Open Inbox' });
-    this.inboxHeading = page.getByText('Inbox');
+    this.inboxHeading = page.getByRole('heading', { name: 'Inbox' });
   }
 
+  // Builds the expected voucher email subject line from the voucher amount
   static voucherSubject(amount: string): string {
     const numeric = parseFloat(amount.replace('€', '').trim()).toFixed(2);
     return `You've been sent a \u20ac${numeric}`;
   }
 
+  // Navigates to Mail7, enters the mailbox name, opens the inbox, and waits for the heading to confirm it loaded
   private async openInbox(mailbox: string): Promise<void> {
     await this.page.goto('https://portal.mail7.app/');
     await this.usernameInput.fill(mailbox);
@@ -33,6 +35,7 @@ export class Mail7Page {
     await expect(this.inboxHeading).toBeVisible();
   }
 
+  // Checks whether every expected subject line is currently visible in the open inbox
   private async hasAllSubjects(subjects: string[]): Promise<boolean> {
     for (const subject of subjects) {
       const locator = this.page.getByText(subject).first();
@@ -43,10 +46,12 @@ export class Mail7Page {
     return true;
   }
 
+  // Convenience wrapper for checking a single subject
   async checkMailboxForSubject(mailbox: string, subject: string): Promise<void> {
     await this.checkMailboxForSubjects(mailbox, [subject]);
   }
 
+  // Opens the mailbox and polls for all expected subjects, retrying at intervals to handle mail delivery delays
   async checkMailboxForSubjects(mailbox: string, subjects: string[]): Promise<void> {
     // Wait before the first check to give the mail server time to deliver
     await this.page.waitForTimeout(Mail7Page.initialWaitMs);

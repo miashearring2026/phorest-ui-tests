@@ -61,6 +61,7 @@ export class GiftVoucherPage {
     this.paymentFailureMessage = page.getByText('Your card has been declined.');
   }
 
+  // Navigates to the demo voucher page with a single retry to reduce flakiness on slow initial loads
   async navigateToDemo() {
     for (let attempt = 0; attempt < 2; attempt++) {
       await this.page.goto(GiftVoucherPage.demoUrl, { waitUntil: 'domcontentloaded' });
@@ -74,10 +75,12 @@ export class GiftVoucherPage {
     await expect(this.page.getByRole('radio', { name: '€50' })).toBeVisible({ timeout: 10000 });
   }
 
+  // Clicks one of the preset voucher amount radio buttons
   async selectAmount(amount: string) {
     await this.page.getByRole('radio', { name: amount }).click();
   }
 
+  // Selects the "Other" radio and types a custom numeric amount, stripping any currency symbols first
   async selectCustomAmount(amount: string) {
     const normalisedAmount = amount.replace(/[^\d.]/g, '');
 
@@ -89,6 +92,7 @@ export class GiftVoucherPage {
     await this.customAmountInput.fill(normalisedAmount);
   }
 
+  // Asserts the correct tab is active by checking both the data attribute on the container and the active CSS class on the tab link
   async verifyTabIsSelected(tabName: string) {
     const tabMap: Record<string, string> = {
       'Send to me': 'SEND_TO_MYSELF',
@@ -106,12 +110,14 @@ export class GiftVoucherPage {
     await expect(this.page.getByRole('link', { name: tabName })).toHaveClass(/border-brand/);
   }
 
+  // Clicks the "Send to someone else" tab and verifies it becomes active
   async selectSendToSomeoneElseTab() {
     const tabName = 'Send to someone else';
     await this.sendToSomeoneElseTab.click();
     await this.verifyTabIsSelected(tabName);
   }
 
+  // Fills in the recipient details form - giftRecipientEmail and message are only filled when provided
   async enterRecipientDetails(
     email: string,
     forename: string,
@@ -131,14 +137,17 @@ export class GiftVoucherPage {
     }
   }
 
+  // Clicks Checkout to navigate from the details form to the order summary page
   async goToSummary() {
     await this.checkoutButton.click();
   }
 
+  // Asserts the Checkout button has the disabled CSS class, meaning the form is incomplete or invalid
   async verifyCannotProceedToSummary() {
     await expect(this.checkoutButton).toHaveClass(/btn-disabled/);
   }
 
+  // Reads the text content of each summary field and asserts it matches the expected values
   async verifySummaryDetails(voucherValue: string, totalCost: string, purchaserEmail: string, recipientEmail: string) {
     await expect((await this.confirmVoucherValue.innerText()).trim()).toBe(voucherValue);
     await expect((await this.confirmTotalAmount.innerText()).trim()).toBe(totalCost);
@@ -146,10 +155,12 @@ export class GiftVoucherPage {
     await expect((await this.confirmRecipientEmail.innerText()).trim()).toBe(recipientEmail);
   }
 
+  // Clicks Confirm Details to proceed from the summary page to the payment form
   async confirmDetails() {
     await this.confirmDetailsButton.click();
   }
 
+  // Fills card details inside Stripe's embedded iframe
   async enterCardDetails(cardNumber: string, expiry: string, cvc: string) {
     await this.cardNumberInput.fill(cardNumber);
     await this.cardExpiryInput.fill(expiry);
@@ -160,6 +171,7 @@ export class GiftVoucherPage {
     await this.payButton.click();
   }
 
+  // Asserts the success message is visible, then verifies the voucher code and the correct amount appear on the page
   async verifyConfirmationPage(expectedAmount: string) {
     await expect(this.confirmationMessage).toBeVisible({ timeout: 20000 });
 
@@ -171,18 +183,22 @@ export class GiftVoucherPage {
     await expect(this.page.getByText('€').nth(1)).toContainText(expectedAmount);
   }
 
+  // Returns to the details form from the summary page to allow changes before payment
   async clickEdit() {
     await this.editButton.click();
   }
 
+  // Asserts the inline email validation error is visible after submitting an invalid email address
   async assertInvalidEmailErrorMessage() {
     await expect(this.invalidEmailErrorMessage).toBeVisible();
   }
 
+  // Asserts the minimum spend validation error is visible after entering an amount below the threshold
   async assertInvalidCustomAmountErrorMessage() {
     await expect(this.invalidCustomAmountErrorMessage).toBeVisible();
   }
 
+  // Asserts Stripe's card declined message is visible after submitting an invalid card
   async assertPaymentFailureMessage() {
     await expect(this.paymentFailureMessage).toBeVisible();
   }
