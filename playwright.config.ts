@@ -15,7 +15,7 @@ import { defineBddConfig } from 'playwright-bdd';
 export default defineConfig({
   testDir: './.features-gen',
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* BDD configuration (required by bddgen and the runner) */
   // call defineBddConfig to register BDD settings with the CLI; the
   // return value (outputDir) is not meant to be spread.
@@ -29,7 +29,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -45,7 +45,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     },
 
     {
