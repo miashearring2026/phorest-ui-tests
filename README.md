@@ -105,6 +105,14 @@ pages/              - Page Object Model classes
 - Navigation includes light retry logic to reduce flakiness on initial page load.
 - Stripe payment fields are handled via frame locators to correctly interact with embedded secure inputs.
 
+## Browser Support
+
+Tests are configured to run on Chromium.
+
+The payment flow relies on third-party Stripe iframes, which can exhibit engine-specific timing differences across browsers in headless CI environments.
+
+To ensure deterministic and stable execution, the suite runs on Chromium, which is sufficient for validating the end-to-end checkout flow in this context.
+
 ## Email Verification
 
 Email checks are performed via [Mail7](https://portal.mail7.app), a public disposable inbox service.

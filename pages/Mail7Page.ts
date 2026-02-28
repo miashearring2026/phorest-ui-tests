@@ -28,11 +28,26 @@ export class Mail7Page {
   }
 
   // Navigates to Mail7, enters the mailbox name, opens the inbox, and waits for the heading to confirm it loaded
+  // Retries once on transient network errors (e.g. ERR_NETWORK_CHANGED, chrome-error redirect)
   private async openInbox(mailbox: string): Promise<void> {
-    await this.page.goto('https://portal.mail7.app/');
-    await this.usernameInput.fill(mailbox);
-    await this.openInboxButton.click();
-    await expect(this.inboxHeading).toBeVisible();
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        await this.page.goto('https://portal.mail7.app/', { waitUntil: 'domcontentloaded' });
+
+        // If Chrome redirected to an error page, treat it as a retryable failure
+        if (this.page.url().startsWith('chrome-error://')) {
+          throw new Error('Navigation redirected to chrome-error page');
+        }
+
+        await this.usernameInput.fill(mailbox);
+        await this.openInboxButton.click();
+        await expect(this.inboxHeading).toBeVisible();
+        return;
+      } catch (err) {
+        if (attempt === 1) throw err;
+        await this.page.waitForTimeout(2000);
+      }
+    }
   }
 
   // Checks whether every expected subject line is currently visible in the open inbox

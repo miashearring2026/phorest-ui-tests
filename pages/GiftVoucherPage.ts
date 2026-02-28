@@ -200,7 +200,7 @@ export class GiftVoucherPage {
 
   // Asserts Stripe's card declined message is visible after submitting an invalid card
   async assertPaymentFailureMessage() {
-    await expect(this.paymentFailureMessage).toBeVisible();
+    await expect(this.paymentFailureMessage).toBeVisible({ timeout: 15000 });
   }
 }
 
