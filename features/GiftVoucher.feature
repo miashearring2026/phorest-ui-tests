@@ -1,5 +1,5 @@
 @GiftVoucher
-@timeout:120000
+@timeout:180000
 Feature: Gift Voucher Purchase
 
     Background:

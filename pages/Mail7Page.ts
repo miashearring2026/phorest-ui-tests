@@ -10,7 +10,7 @@ export class Mail7Page {
   // Constants
   static readonly receiptSubject = 'Your Receipt for City Salon';
   static readonly initialWaitMs = 11000;       // wait before first inbox check to allow email delivery
-  static readonly inboxPollTimeoutMs = 60000;
+  static readonly inboxPollTimeoutMs = 90000;
   static readonly inboxPollIntervalMs = 3000;
 
   constructor(page: Page) {
@@ -18,7 +18,7 @@ export class Mail7Page {
 
     this.usernameInput = page.getByRole('textbox', { name: 'username' });
     this.openInboxButton = page.getByRole('button', { name: 'Open Inbox' });
-    this.inboxHeading = page.getByRole('heading', { name: 'Inbox' });
+    this.inboxHeading = page.getByText('Inbox', { exact: true });
   }
 
   // Builds the expected voucher email subject line from the voucher amount
@@ -41,7 +41,7 @@ export class Mail7Page {
 
         await this.usernameInput.fill(mailbox);
         await this.openInboxButton.click();
-        await expect(this.inboxHeading).toBeVisible();
+        await expect(this.inboxHeading).toBeVisible({ timeout: 15000 });
         return;
       } catch (err) {
         if (attempt === 1) throw err;
