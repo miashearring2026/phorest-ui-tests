@@ -119,7 +119,7 @@ Email checks are performed via [Mail7](https://portal.mail7.app), a public dispo
 
 - No API key required
 - Inbox is accessed via UI
-- Polling mechanism retries for up to 30 seconds
+- Polling mechanism retries for up to 90 seconds
 
 If email checks fail intermittently, the polling constants in `Mail7Page.ts` can be adjusted:
 
